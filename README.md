@@ -48,3 +48,24 @@ docker run -dp 127.0.0.0:3000:3000 getting-started
     -   HOST는 호스트의 주소이고 CONTAINER는 컨테이너의 포트이다.
     -   127.0.0.1:3000 으로 접속하면 컨테이너 3000 포트로 연결할 수 있다.
     -   포트매핑을 하지 않으면 컨테이너로 실행한 어플리케이션에 접근할 수 없다.
+
+# 어플리케이션 업데이트
+
+## 소스코드 변경 후 도커 이미지 재빌드
+
+```
+docker build -t getting-started
+```
+
+## 기존 컨테이너 정지 및 삭제
+
+```
+docker stop getting-started
+docker rm getting-started
+```
+
+## 새 컨테이너 실행
+
+```
+docker run -dp 127.0.0.1:3000:3000 getting-started
+```
