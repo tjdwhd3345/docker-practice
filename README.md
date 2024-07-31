@@ -4,6 +4,36 @@ This repository is a sample application for users following the getting started 
 
 The application is based on the application from the getting started tutorial at https://github.com/docker/getting-started
 
+# 주요 명령어
+
+```bash
+# 이미지 빌드
+docker build -t <IMAGE_TAG_NAME>
+
+# 이미지로 컨테이너 실행
+docker run -dp <HOST>:<CONTAINER> <IMAGE_TAG_NAME>
+
+# 실행중인 컨테이너 목록
+docker ps
+docker container list
+
+# 이미지 목록
+docker images
+docker image list
+
+# 컨테이너 정지
+docker stop <CONATINER_ID>
+
+# 컨테이너 삭제
+docker rm <CONTAINER_ID>
+
+# 정지 및 삭제
+docker rm -f <CONATINER_ID>
+
+# 이미지 삭제
+docker rmi <IMAGE_TAG_NAME>
+```
+
 # 어플리케이션 도커 이미지 빌드
 
 빌드를 위해 Dockerfile이 필요함.
