@@ -10,8 +10,11 @@ The application is based on the application from the getting started tutorial at
 # 이미지 빌드
 docker build -t <IMAGE_TAG_NAME>
 
-# 이미지로 컨테이너 실행
+# 이미지로 컨테이너 실행 (데몬)
 docker run -dp <HOST>:<CONTAINER> <IMAGE_TAG_NAME>
+
+# 이미지로 컨테이너 실행 후 컨테이너 내부 쉘로 접근
+docker run -it
 
 # 실행중인 컨테이너 목록
 docker ps
@@ -32,6 +35,15 @@ docker rm -f <CONATINER_ID>
 
 # 이미지 삭제
 docker rmi <IMAGE_TAG_NAME>
+
+# 이미지에 태그명 부여
+docker tag <TAG_NAME> <USER_NAME>/<IMAGE>
+
+# 컨테이너 로그 보기
+docker logs -f <CONTAINER_ID>
+
+# 컨테이너 내부에 쉘로 접근
+docker exec -it <CONTAINER_ID> sh
 ```
 
 # 어플리케이션 도커 이미지 빌드
@@ -98,4 +110,40 @@ docker rm getting-started
 
 ```
 docker run -dp 127.0.0.1:3000:3000 getting-started
+```
+
+# 도커 컨테이너와 호스트 머신간 파일시스템 연결
+
+마운트 기능을 사용하면 도커 컨테이너 내부의 파일시스템과 호스트 머신의 파일시스템을 연결할 수 있다.
+
+### 마운트 종류
+
+-   Named volume mount
+-   Bind mount
+
+|                                    | Named volumes | Bind mounts     |
+| ---------------------------------- | ------------- | --------------- |
+| Host 위치                          | 도커가 선택함 | 사용자가 결정함 |
+| 컨테이너 컨텐츠를 새 볼륨으로 채움 | YES           | NO              |
+| 볼륨 드라이버 지원                 | YES           | NO              |
+
+### --mount 옵션으로 사용 시
+
+-   Named volume mount: `type=volume,src=my-volume,target=/usr/local/data`
+-   Bind mount: `type=bind,src=/path/to/data,target=/usr/local/data`
+
+예시)
+
+```bash
+# volume mount
+docker run -dp 127.0.0.1:3000:3000 --mount type=volume,src=todo-db,target=/etc/todos getting-stared
+
+# bind mount
+docker run -dp 127.0.0.1:3000:3000 --mount type=bind,src="$(pwd)",target=/src getting-started
+```
+
+## 볼륨 상세히 보기
+
+```bash
+docker volume inspect <VOLUME_NAME>
 ```
