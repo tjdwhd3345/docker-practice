@@ -147,3 +147,43 @@ docker run -dp 127.0.0.1:3000:3000 --mount type=bind,src="$(pwd)",target=/src ge
 ```bash
 docker volume inspect <VOLUME_NAME>
 ```
+
+# 여러 컨테이너를 사용하며 연결하기
+
+일반적으로 프론트엔드/백엔드/DB와 같이 컨테이너를 구분하여 사용할 것이다.
+
+기본적으로 각 컨테이너는 독립적으로 동작하기 때문에 서로의 존재를 모른다.
+
+여러 컨테이너를 사용하면서 서로 연결하는 방법.
+
+-   컨테이너 실행 시 네트워크를 할당
+-   이미 실행중인 컨테이너에 네트워크를 연결
+
+## 도커 네트워크 생성
+
+```bash
+docker network create <NETWORK_NAME>
+docker network create todo-app
+```
+
+## 컨테이너 실행 시 네트워크를 할당
+
+```bash
+docker run -d --network <NETWORK_NAME> --network-alais <NETWORK_ALIAS_NAME> <IMAGE_NAME>
+
+docker run -d \
+  --network todo-app --network-alias mysql \
+  -v todo-mysql-data:/var/lib/mysql \
+  -e MYSQL_ROOT_PASSWORD=secret \
+  -e MYSQL_DATABASE=todos \
+  mysql:8.0
+```
+
+-   `-v`: 볼륨을 설정할 때 이전에 생성하지 않았어도 도커가 알아서 생성해준다.
+
+## 컨테이너 내부 쉘에 접근하여 확인
+
+```bash
+docker exec -it <CONTAINER_ID> mysql -u root -p
+# 비밀번호는 secret
+```
