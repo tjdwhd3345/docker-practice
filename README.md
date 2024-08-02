@@ -44,6 +44,13 @@ docker logs -f <CONTAINER_ID>
 
 # 컨테이너 내부에 쉘로 접근
 docker exec -it <CONTAINER_ID> sh
+
+# 도커 compose
+docker compose up -d
+docker compose down
+docker compose logs -f [<service_name>]
+docker compose start <service_name>
+docker compose stop <service_name>
 ```
 
 # 어플리케이션 도커 이미지 빌드
@@ -186,4 +193,62 @@ docker run -d \
 ```bash
 docker exec -it <CONTAINER_ID> mysql -u root -p
 # 비밀번호는 secret
+```
+
+# 도커 Compose 사용하기
+
+여러 개의 컨테이너 (Multi Container)인 상황을 잘 조율할 수 있게 해주는 오케스트레이션 도구이다.
+
+기본적으로 yaml 파일에 각 컨테이너를 services로 정의하여 제어한다.
+
+> docker-compose vs docer compose
+> <br/> - docker-compose 는 v1 버전인거 같다.
+> <br/> - docker compose 는 v2 버전으로 더 최신버전임.
+
+## Compose 파일 생성
+
+`docker run -dp ...` 명령어로 커맨드라인 실행했던 것을 compose yaml 파일로 작성하여 제어할 수 있다.
+
+```yaml
+services:
+    app:
+        image: node:18-alpine # 사용할 이미지
+        command: sh -c "yarn install && yarn run dev" # 컨테이너가 올라간 후 실행할 명령어
+        ports:
+            - 127.0.0.1:3000:3000 # 호스트 머신과 컨테이너를 연결할 포트
+        working_dir: /app
+        volumes:
+            - ./:/app # 호스트 머신과 컨테이너의 볼륨 마운트
+        environment: # 컨테이너에 전달할 환경변수
+            MYSQL_HOST: mysql
+            MYSQL_USER: root
+            MYSQL_PASSWORD: secret
+            MYSQL_DB: todos
+
+volumes: # named volume을 사용할 경우 적어준다.
+    - todo-mysql-data:
+```
+
+## Compose 파일로 컨테이너 실행
+
+```bash
+docker compose up -d
+```
+
+detach 된 상태로 compose에 작성한 전체 서비스들이 실행된다.
+
+개별 서비스 별로 실행하려면
+
+```bash
+docker compose start <service_name>
+docker compose stop <service_name>
+```
+
+실행 중인 컨테이너를 확인하려면 `docker compose ps` 명령어로 확인할 수 있다.
+
+## Compose로 실행된 컨테이너들의 로그 확인
+
+```bash
+docker compose logs -f
+docker compose logs -f <service_name> #  특정 서비스만 확인하기
 ```
